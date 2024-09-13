@@ -29,40 +29,19 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-type Piece =
-  | "K"
-  | "Q"
-  | "R"
-  | "B"
-  | "N"
-  | "P"
-  | "k"
-  | "q"
-  | "r"
-  | "b"
-  | "n"
-  | "p"
-  | null;
-type Board = Piece[][];
-type Turn = "white" | "black";
-type Move = { from: [number, number]; to: [number, number] };
 
-const pieces: Record<Exclude<Piece, null>, string> = {
-  K: "♔",
-  Q: "♕",
-  R: "♖",
-  B: "♗",
-  N: "♘",
-  P: "♙",
-  k: "♚",
-  q: "♛",
-  r: "♜",
-  b: "♝",
-  n: "♞",
-  p: "♙",
-};
 
-const initialBoard: Board = [
+import Timer from "@/components/ChessSubparts/Timer";
+import { PieceType } from "@/components/ChessSubparts/Square";
+import Chessboard from "@/components/ChessSubparts/Chessboard";
+
+export type Board = PieceType[][];
+export type Turn = "white" | "black";
+export type Move = { from: [number, number]; to: [number, number] };
+
+
+
+export const initialBoard: Board = [
   ["r", "n", "b", "q", "k", "b", "n", "r"],
   ["p", "p", "p", "p", "p", "p", "p", "p"],
   Array(8).fill(null),
@@ -73,109 +52,6 @@ const initialBoard: Board = [
   ["R", "N", "B", "Q", "K", "B", "N", "R"],
 ];
 
-interface PieceProps {
-  piece: Exclude<Piece, null>;
-  isWhite: boolean;
-}
-
-const Piece: React.FC<PieceProps> = ({ piece, isWhite }) => {
-  return (
-    <div
-      className={`text-4xl ${
-        isWhite ? "text-white" : "text-black"
-      } drop-shadow-md transition-transform hover:scale-110`}
-    >
-      {pieces[piece]}
-    </div>
-  );
-};
-
-interface SquareProps {
-  piece: Piece;
-  isBlack: boolean;
-  onClick: () => void;
-  isSelected: boolean;
-  isSuggested: boolean;
-}
-
-const Square: React.FC<SquareProps> = ({
-  piece,
-  isBlack,
-  onClick,
-  isSelected,
-  isSuggested,
-}) => {
-  const bgColor = isBlack ? "bg-emerald-800" : "bg-emerald-200";
-  const selectedClass = isSelected ? "ring-4 ring-yellow-400" : "";
-  const suggestedClass = isSuggested ? "bg-yellow-200" : "";
-  return (
-    <div
-      className={`w-20 h-20 flex items-center justify-center ${bgColor} ${selectedClass} ${suggestedClass} cursor-pointer transition-all duration-300 ease-in-out hover:opacity-80`}
-      onClick={onClick}
-    >
-      {piece && <Piece piece={piece} isWhite={piece.toUpperCase() === piece} />}
-    </div>
-  );
-};
-
-interface ChessboardProps {
-  board: Board;
-  onSquareClick: (row: number, col: number) => void;
-  selectedSquare: [number, number] | null;
-  suggestedMove: Move | null;
-}
-
-const Chessboard: React.FC<ChessboardProps> = ({
-  board,
-  onSquareClick,
-  selectedSquare,
-  suggestedMove,
-}) => {
-  return (
-    <div className="grid grid-cols-8 gap-0 border-8 border-emerald-900 rounded-lg shadow-2xl">
-      {board.flatMap((row, i) =>
-        row.map((piece, j) => (
-          <Square
-            key={`${i}-${j}`}
-            piece={piece}
-            isBlack={(i + j) % 2 === 1}
-            onClick={() => onSquareClick(i, j)}
-            isSelected={
-              selectedSquare !== null &&
-              selectedSquare[0] === i &&
-              selectedSquare[1] === j
-            }
-            isSuggested={
-              suggestedMove !== null &&
-              ((suggestedMove.from[0] === i && suggestedMove.from[1] === j) ||
-                (suggestedMove.to[0] === i && suggestedMove.to[1] === j))
-            }
-          />
-        ))
-      )}
-    </div>
-  );
-};
-
-interface TimerProps {
-  time: number;
-  isActive: boolean;
-}
-
-const Timer: React.FC<TimerProps> = ({ time, isActive }) => {
-  const minutes = Math.floor(time / 60);
-  const seconds = time % 60;
-  return (
-    <div
-      className={`text-sm sm:text-base md:text-lg lg:text-2xl font-mono font-bold ${
-        isActive ? `${minutes<1?"text-white bg-red-800":"text-emerald-500 bg-black"} rounded-sm` : "text-gray-500"
-      } transition-colors duration-300`}
-    >
-      {minutes.toString().padStart(2, "0")}:
-      {seconds.toString().padStart(2, "0")}
-    </div>
-  );
-};
 
 const ChessGame: React.FC = () => {
   const [board, setBoard] = useState<Board>(initialBoard);
@@ -559,19 +435,19 @@ const ChessGame: React.FC = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br rounded-lg bg-white flex items-center justify-center p-2">
-      <Card className="w-full bg-white shadow-2xl flex">
-        <CardHeader className="bg-emerald-900 w-1/4 rounded-xl">
-          <CardTitle className="lg:text-4xl text-xl sm:text-2xl md:text-3xl font-bold text-center text-transparent bg-clip-text inline-block bg-gradient-to-r from-blue-500 via-yellow-300 to-blue-900  font-serif">
+    <div className="h-screen overflow-hidden w-full bg-gradient-to-br rounded-lg bg-white flex items-center justify-center sm:p-2">
+      <Card className="w-full h-full bg-white shadow-2xl flex flex-col sm:flex-row">
+        <CardHeader className="bg-emerald-900 flex-1 sm:h-full sm:w-1/4 rounded-xl">
+          <CardTitle className="lg:text-4xl text-base sm:text-xl md:text-3xl font-bold text-transparent bg-clip-text inline-block text-center bg-gradient-to-r from-blue-500 via-yellow-300 to-blue-900  font-serif">
             Chess Game
           </CardTitle>
-          <div className="flex flex-col gap-3">
-          <div className={`text-xl flex items-center justify-center ${isGameStarted?"flex":"hidden"}  font-serif font-semibold bg-emerald-100 px-6 py-3 rounded-full text-emerald-800`}>
+          <div className="flex flex-row justify-center items-center sm:flex-col gap-3">
+          <div className={`text-base flex items-center justify-center ${isGameStarted?"flex":"hidden"}  font-serif font-semibold bg-emerald-100 px-6 py-3 rounded-xl sm:rounded-full text-emerald-800`}>
             {isGameStarted
               ? `Turn: ${turn === "white" ? "White" : "Black"}`
               : ""}
           </div>
-          <div className="flex flex-col gap-2 lg:flex-row justify-center items-center bg-emerald-100 p-2 rounded-lg">
+          <div className="flex flex-row sm:flex-col gap-2 lg:flex-row justify-center items-center bg-emerald-100 p-2 rounded-lg">
             <Timer
               time={whiteTime}
               isActive={isGameStarted && turn === "white"}
@@ -587,7 +463,7 @@ const ChessGame: React.FC = () => {
             />
           </div>
           </div>
-          <CardFooter className="flex flex-col gap-5 justify-center items-center p-6 font-serif">
+          <CardFooter className="flex flex-row flex-wrap gap-2 sm:flex-col sm:gap-5 justify-center items-center p-1 sm:p-6 font-serif">
           {!isGameStarted && (
             <Button
               variant="whitebtn"
@@ -640,8 +516,10 @@ const ChessGame: React.FC = () => {
           </TooltipProvider>
         </CardFooter>
         </CardHeader>
+
+
         
-        <CardContent className="flex w-3/4 h-screen items-center space-y-6 p-8">
+        <CardContent className="flex sm:w-3/4 h-3/4 sm:h-screen items-center sm:space-y-6 p-1 sm:p-6 md:p-8">
           
           <Chessboard
             board={board}
