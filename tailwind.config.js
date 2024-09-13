@@ -6,6 +6,9 @@ export default {
 	  "./src/**/*.{js,ts,jsx,tsx}",
 	],
 	theme: {
+		// screens:{
+		// 	 'tablet': '800px',
+		// },
 	  extend: {
 		borderRadius: {
 		  lg: 'var(--radius)',
