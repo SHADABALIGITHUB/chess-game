@@ -304,7 +304,10 @@ const ChessGame: React.FC = () => {
   };
 
   const handleSquareClick = (i: number, j: number) => {
-    if (isGameOver || !isGameStarted) return;
+    if (isGameOver || !isGameStarted){
+      
+      return;
+    } 
 
     if (selectedSquare) {
       const [si, sj] = selectedSquare;
@@ -526,6 +529,7 @@ const ChessGame: React.FC = () => {
             onSquareClick={handleSquareClick}
             selectedSquare={selectedSquare}
             suggestedMove={suggestedMove}
+            isGameStarted={isGameStarted}
           />
         </CardContent>
        

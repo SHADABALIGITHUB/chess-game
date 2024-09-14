@@ -33,7 +33,7 @@ interface SquareProps {
     isSuggested,
   }) => {
     const bgColor = isBlack ? "bg-emerald-800" : "bg-emerald-200";
-    const selectedClass = isSelected ? "ring-4 ring-yellow-400" : "";
+    const selectedClass = isSelected ? "bg-sky-800" : "";
     const suggestedClass = isSuggested ? "bg-yellow-200" : "";
     return (
       <div
